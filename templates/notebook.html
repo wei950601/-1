@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}聯絡簿{% endblock %}
+{% block content %}
+<div class="page orange-theme">
+  <form method="get" class="form inline">
+    <label>選擇日期 <input type="date" name="d" value="{{ cur_date.isoformat() }}"></label>
+    <button class="btn">切換</button>
+  </form>
+  <form method="post" class="form">
+    <input type="hidden" name="the_date" value="{{ cur_date.isoformat() }}">
+    <div class="bullets">
+      {% for b in bullets %}
+        <div class="bullet">
+          <span>•</span>
+          <input type="text" name="bullet" value="{{ b }}">
+          <button type="button" class="btn btn-small btn-del">刪除</button>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="actions">
+      <button type="button" id="btn-add-bullet" class="btn">新增</button>
+      <button class="btn">儲存</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('btn-add-bullet').addEventListener('click', ()=>{
+  const wrap = document.querySelector('.bullets');
+  const div = document.createElement('div');
+  div.className='bullet';
+  div.innerHTML = '<span>•</span><input type="text" name="bullet" value=""><button type="button" class="btn btn-small btn-del">刪除</button>';
+  wrap.appendChild(div);
+});
+document.addEventListener('click', (e)=>{
+  if (e.target.classList.contains('btn-del')) {
+    e.target.parentElement.remove();
+  }
+});
+</script>
+{% endblock %}

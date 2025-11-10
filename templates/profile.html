@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}頭像與姓名{% endblock %}
+{% block content %}
+<h2>頭像與姓名</h2>
+<form method="post" class="form">
+  <label>姓名
+    <input type="text" name="name" value="{{ profile.name }}">
+  </label>
+  <label>頭像圖片網址
+    <input type="url" name="avatar_url" value="{{ profile.avatar_url or '' }}">
+  </label>
+  <button class="btn">儲存</button>
+</form>
+{% endblock %}

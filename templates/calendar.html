@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}行事曆{% endblock %}
+{% block content %}
+<div class="page calendar blue-theme">
+  <div class="page-header">
+    <div class="title">{{ year }} 年 {{ '%02d' % month }} 月</div>
+    <button id="btn-add-event" class="btn">＋</button>
+  </div>
+  <div class="calendar-grid">
+    <div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div>
+    <div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div><div class="weekday">日</div>
+    {% for week in weeks %}
+      {% for d in week %}
+        <div class="day {% if d.month != month %}muted{% endif %}">
+          <div class="day-num">{{ d.day }}</div>
+          <div class="events">
+            {% for e in events_by_day.get(d, []) %}
+              <form method="post" action="{{ url_for('delete_event', eid=e.id) }}" class="event">
+                <div class="event-title" title="{{ e.title }}">{{ e.title }}</div>
+                <button class="del" title="刪除">✕</button>
+              </form>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Add Event Modal -->
+<div id="event-modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-title">新增行程</div>
+    <form method="post" action="{{ url_for('add_event') }}" class="form">
+      <label>標題 <input name="title" required></label>
+      <label>開始時間 <input type="datetime-local" name="start_dt" required></label>
+      <label>結束時間 <input type="datetime-local" name="end_dt" required></label>
+      <div class="row">
+        <label>第一次提醒
+          <select name="reminder1">
+            <option value="">（不選）</option>
+            <option value="2h">開始前兩小時</option>
+            <option value="1d">開始前一天</option>
+          </select>
+        </label>
+        <label>第二次提醒
+          <select name="reminder2">
+            <option value="">（不選）</option>
+            <option value="2h">開始前兩小時</option>
+            <option value="1d">開始前一天</option>
+          </select>
+        </label>
+      </div>
+      <button class="btn">儲存</button>
+    </form>
+    <div class="modal-actions">
+      <button id="btn-close-event" class="btn">關閉</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('btn-add-event').addEventListener('click', ()=>{
+  document.getElementById('event-modal').classList.remove('hidden');
+});
+document.getElementById('btn-close-event').addEventListener('click', ()=>{
+  document.getElementById('event-modal').classList.add('hidden');
+});
+</script>
+{% endblock %}

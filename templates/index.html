@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}家教 App - 主畫面{% endblock %}
+{% block content %}
+<div class="grid">
+  <a class="card blue" href="{{ url_for('calendar_page') }}"><span>行事曆</span></a>
+  <a class="card green" href="{{ url_for('checkin_page') }}"><span>打卡</span></a>
+  <a class="card red" href="{{ url_for('questions_page') }}"><span>問題</span></a>
+  <a class="card orange" href="{{ url_for('notebook_page') }}"><span>聯絡簿</span></a>
+  <a class="card yellow" href="{{ url_for('grades_page') }}"><span>成績紀錄</span></a>
+</div>
+{% endblock %}

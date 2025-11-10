@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}成績紀錄{% endblock %}
+{% block content %}
+<div class="page yellow-theme">
+  <form method="post" class="form inline">
+    <label>新增科目
+      <input type="text" name="new_subject" placeholder="科目名稱">
+    </label>
+    <button class="btn">新增</button>
+  </form>
+
+  <h3>新增成績</h3>
+  <form method="post" class="form add-grade">
+    <label>日期 <input type="date" name="the_date" value="{{ today.isoformat() }}"></label>
+    <label>科目
+      <select name="subject_id" required>
+        {% for s in subjects %}
+          <option value="{{ s.id }}">{{ s.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>分數 <input type="number" step="0.01" name="score" required></label>
+    <label>排名 <input type="number" name="rank" min="1"></label>
+    <button class="btn">新增</button>
+  </form>
+
+  <h3>紀錄</h3>
+  <table class="table">
+    <thead><tr><th>日期</th><th>科目</th><th>分數</th><th>排名</th><th></th></tr></thead>
+    <tbody>
+      {% for g in grades %}
+        <tr>
+          <td>{{ g.the_date.isoformat() }}</td>
+          <td>{{ g.subject.name }}</td>
+          <td>{{ '%.2f' % g.score }}</td>
+          <td>{{ g.rank or '' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('grade_delete', gid=g.id) }}">
+              <button class="btn btn-small">刪除</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

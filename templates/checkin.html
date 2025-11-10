@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}打卡{% endblock %}
+{% block content %}
+<div class="page green-theme">
+  <div class="page-header"><div class="title">{{ year }} 年 {{ '%02d' % month }} 月</div></div>
+  <div class="calendar-grid check-grid">
+    <div class="weekday">一</div><div class="weekday">二</div><div class="weekday">三</div>
+    <div class="weekday">四</div><div class="weekday">五</div><div class="weekday">六</div><div class="weekday">日</div>
+    {% for week in weeks %}
+      {% for d in week %}
+        {% set checked = (existing.get(d).checked if existing.get(d) else false) or (d == today and false) %}
+        <div class="day {% if d.month != month %}muted{% endif %}">
+          <div class="day-num">{{ d.day }}</div>
+          <label class="tick">
+            <input type="checkbox" data-day="{{ d.isoformat() }}" {% if existing.get(d) and existing.get(d).checked %}checked{% endif %}>
+            <span>✔</span>
+          </label>
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+// auto-checkin if setting enabled and today unchecked
+(function(){
+  const auto = localStorage.getItem('autoCheckin') === 'true';
+  if (!auto) return;
+  const today = new Date().toISOString().slice(0,10);
+  const box = document.querySelector(`input[type=checkbox][data-day="${today}"]`);
+  if (box && !box.checked) {
+    box.checked = true;
+    fetch('{{ url_for("checkin_toggle") }}', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({day: today, checked: 'true'})
+    });
+  }
+})();
+
+document.querySelectorAll('.check-grid input[type=checkbox]').forEach(cb=>{
+  cb.addEventListener('change', (e)=>{
+    const day = e.target.dataset.day;
+    const checked = e.target.checked ? 'true':'false';
+    fetch('{{ url_for("checkin_toggle") }}', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({day, checked})
+    });
+  });
+});
+</script>
+{% endblock %}

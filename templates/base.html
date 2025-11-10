@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}家教 App{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-theme="color">
+  <header class="topbar">
+    <div class="left">
+      <button id="btn-settings" class="icon-btn" aria-label="設定">⚙️</button>
+    </div>
+    <div class="center">
+      <div class="search-wrap">
+        <input id="search-input" class="search-input" placeholder="搜尋">
+        <div id="search-results" class="search-results"></div>
+      </div>
+    </div>
+    <div class="right">
+      <a class="profile-box" href="{{ url_for('profile') }}">
+        <div class="avatar" style="background-image:url('{{ (profile.avatar_url if profile else '') or '' }}')"></div>
+        <div class="name">{{ (profile.name if profile else '使用者名稱') }}</div>
+      </a>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash">
+        {% for cat, msg in messages %}
+          <div class="flash-item {{cat}}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-title">設定</div>
+      <div class="modal-content">
+        <div class="setting-section">
+          <div class="setting-title">音量（左右聲道）</div>
+          <div class="row">
+            <label>左聲道</label>
+            <input type="range" id="vol-left" min="0" max="1" step="0.01">
+          </div>
+          <div class="row">
+            <label>右聲道</label>
+            <input type="range" id="vol-right" min="0" max="1" step="0.01">
+          </div>
+        </div>
+        <div class="setting-section">
+          <div class="setting-title">通知提示</div>
+          <label><input type="radio" name="notify" value="on"> 開啟</label>
+          <label><input type="radio" name="notify" value="off"> 關閉</label>
+        </div>
+        <div class="setting-section">
+          <div class="setting-title">桌布顏色</div>
+          <label><input type="radio" name="theme" value="bw"> 黑白</label>
+          <label><input type="radio" name="theme" value="color"> 彩色</label>
+        </div>
+        <div class="setting-section">
+          <div class="setting-title">是否自動打卡</div>
+          <label><input type="checkbox" id="auto-checkin"> 自動</label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-close-settings" class="btn">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STATIC_URL = "{{ url_for('static', filename='') }}";
+  </script>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

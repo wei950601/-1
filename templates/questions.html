@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}問題{% endblock %}
+{% block content %}
+<div class="page red-theme">
+  <form method="post" class="form">
+    <label>我要提問
+      <textarea name="text" rows="3" required></textarea>
+    </label>
+    <button class="btn">新增問題</button>
+  </form>
+  <div class="qa-list">
+    {% for q in questions %}
+      <div class="qa">
+        <div class="q">Q: {{ q.text }}</div>
+        <div class="a">A: {{ q.answer or '（尚未回答）' }}</div>
+        <form method="post" action="{{ url_for('questions_answer', qid=q.id) }}" class="form inline">
+          <input type="text" name="answer" placeholder="填寫答案" value="{{ q.answer or '' }}">
+          <button class="btn">儲存答案</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
